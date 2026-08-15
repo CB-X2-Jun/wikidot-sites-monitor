@@ -15,3 +15,4 @@ www|Wikidot|Free and Pro Wiki Hosting
 wmonitor|Monitor Project 站点监视器|还活着吗
 nationareabox|地域沙盒|曾有草稿漫天飞舞
 psychotronicsdivision-cn|格鲁乌“P”部门|即使分崩离析，我们仍为一体
+ci-cn-wiki|混沌分裂者|以混沌之名 重塑世界
