@@ -42,3 +42,4 @@ rpcauthority|RPC Authority|Research, Protection, Containment
 deep-forest-club|深林文学部|森林深处，写作讨论
 discond|discoNd聊天室|随意而聊，随心而写
 the-piyan-cn|piyan|你来到过此处。吗？
+scp-wiki-cloud|SCP基金会云国分部|自由 徜徉 无束
