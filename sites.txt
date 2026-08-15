@@ -55,3 +55,4 @@ feedback|Leave your feedback|
 scp-ukrainian|SCP Foundation Ukrainian Branch|Охороняти. Утримувати. Захищати.
 nationarea-int|The Nationarea INT|International website for The Nationarea
 uiu-wiki-cn|特异事故处|忠诚 · 勇敢 · 正直
+write-on-paper|Write on paper|在纸上随意写点东西
