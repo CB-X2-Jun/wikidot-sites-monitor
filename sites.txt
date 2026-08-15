@@ -65,3 +65,4 @@ kp-backrooms|The Backrooms KP|你从未来过这里...
 u-backrooms|The Backrooms U|你根本没来过这
 historyroom|The Historyroom历室|你确定要来这里？
 brcreater-pro|后室建站器PRO|
+brcreater-mini|后室建站器Mini|你曾在此建站
