@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>站点监控状态</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            color: #333;
+        }
+        h1 { font-size: 1.8rem; margin-bottom: 4px; }
+        .subtitle { color: #6c757d; margin-bottom: 20px; font-size: 0.95rem; }
+        .stats { 
+            display: flex; 
+            gap: 20px; 
+            flex-wrap: wrap; 
+            margin-bottom: 20px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .stats span { font-size: 0.9rem; }
+        .stats .num { font-weight: 700; font-size: 1.2rem; }
+        .loading { text-align: center; padding: 40px; color: #6c757d; }
+        .error { text-align: center; padding: 40px; color: #dc3545; }
+        
+        .card {
+            background: white;
+            border-left: 4px solid #ccc;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            transition: background 0.2s;
+        }
+        .card:hover { background: #fafbfc; }
+        .card .title { font-weight: 600; font-size: 1.05rem; }
+        .card .title a { color: #0366d6; text-decoration: none; }
+        .card .title a:hover { text-decoration: underline; }
+        .card .subtitle { color: #6c757d; font-size: 0.9rem; margin-top: 2px; }
+        .card .meta { 
+            margin-top: 8px; 
+            font-size: 0.85rem; 
+            display: flex; 
+            gap: 16px; 
+            flex-wrap: wrap; 
+            align-items: center;
+        }
+        .status {
+            display: inline-block;
+            padding: 2px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .status-active { background: #d4edda; color: #155724; border-left-color: #28a745; }
+        .status-inactive { background: #fff3cd; color: #856404; border-left-color: #ffc107; }
+        .status-dying { background: #ffe5d0; color: #8a4a1c; border-left-color: #fd7e14; }
+        .status-abandoned { background: #f8d7da; color: #721c24; border-left-color: #dc3545; }
+        .status-deleted { background: #e2e3e5; color: #383d41; border-left-color: #6c757d; }
+        .status-unknown { background: #e9ecef; color: #495057; border-left-color: #6c757d; }
+        
+        .last-update { color: #6c757d; }
+        .subdomain { color: #adb5bd; font-size: 0.8rem; font-family: monospace; }
+        
+        .refresh-btn {
+            background: #0366d6;
+            color: white;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .refresh-btn:hover { background: #0254b4; }
+        .refresh-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .card { padding: 12px 14px; }
+            .stats { flex-direction: column; gap: 6px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📊 站点监控状态</h1>
+    <div class="subtitle">
+        实时从各站点 RSS 抓取最后更新时间 | 
+        <button class="refresh-btn" onclick="loadData()">🔄 刷新</button>
+        <span style="margin-left:12px;font-size:0.8rem;color:#adb5bd;" id="update-time"></span>
+    </div>
+    <div id="stats" class="stats">加载中...</div>
+    <div id="list">请稍候，正在抓取数据...</div>
+
+    <script>
+        // ========== 配置 ==========
+        const SITES_TXT_URL = 'https://raw.githubusercontent.com/CB-X2-Jun/wikidot-sites-monitor/main/sites.txt';
+        // 如果你有跨域代理（比如 Cloudflare Worker 代理），可以设置
+        const RSS_PROXY = ''; // 例如: 'https://your-worker.workers.dev/proxy?url='
+        // 如果 RSS_PROXY 为空，则直接请求 RSS（可能有跨域限制，但很多 Wikidot RSS 允许跨域）
+
+        // ========== 状态定义 ==========
+        const STATUS = {
+            ACTIVE: { days: 7, label: '活跃', cls: 'active' },
+            INACTIVE: { days: 30, label: '不活跃', cls: 'inactive' },
+            DYING: { days: 365, label: '垂死状态', cls: 'dying' },
+            ABANDONED: { days: Infinity, label: '无人问津', cls: 'abandoned' },
+        };
+
+        function getStatus(diffDays) {
+            if (diffDays <= STATUS.ACTIVE.days) return STATUS.ACTIVE;
+            if (diffDays <= STATUS.INACTIVE.days) return STATUS.INACTIVE;
+            if (diffDays <= STATUS.DYING.days) return STATUS.DYING;
+            return STATUS.ABANDONED;
+        }
+
+        // ========== 抓取 sites.txt ==========
+        async function fetchSitesList() {
+            const resp = await fetch(SITES_TXT_URL, { cache: 'no-store' });
+            if (!resp.ok) throw new Error(`无法获取 sites.txt (HTTP ${resp.status})`);
+            const text = await resp.text();
+            const lines = text.split('\n').filter(line => line.trim() && line.includes('|'));
+            return lines.map(line => {
+                const parts = line.split('|').map(s => s.trim());
+                return {
+                    subdomain: parts[0],
+                    title: parts[1] || parts[0],
+                    subtitle: parts[2] || ''
+                };
+            });
+        }
+
+        // ========== 检查单个站点的 RSS ==========
+        async function checkSite(site) {
+            const { subdomain, title, subtitle } = site;
+            const rssUrl = `http://${subdomain}.wikidot.com/feed/site-changes.xml`;
+            const url = RSS_PROXY ? `${RSS_PROXY}${encodeURIComponent(rssUrl)}` : rssUrl;
+            
+            try {
+                const resp = await fetch(url, { cache: 'no-store' });
+                if (resp.status === 404) {
+                    return { ...site, lastUpdate: null, status: '已被删除', statusCls: 'deleted' };
+                }
+                if (!resp.ok) {
+                    return { ...site, lastUpdate: null, status: '异常', statusCls: 'unknown' };
+                }
+                const xml = await resp.text();
+                
+                // 提取 lastBuildDate
+                let match = xml.match(/<lastBuildDate>(.*?)<\/lastBuildDate>/i);
+                if (!match) {
+                    match = xml.match(/<pubDate>(.*?)<\/pubDate>/i);
+                }
+                if (!match) {
+                    return { ...site, lastUpdate: null, status: '未知', statusCls: 'unknown' };
+                }
+                
+                const dateStr = match[1];
+                const dt = new Date(dateStr);
+                if (isNaN(dt.getTime())) {
+                    return { ...site, lastUpdate: dateStr, status: '日期解析失败', statusCls: 'unknown' };
+                }
+                
+                const now = new Date();
+                const diffDays = (now - dt) / (1000 * 60 * 60 * 24);
+                const statusInfo = getStatus(diffDays);
+                
+                // 格式化显示
+                const displayDate = dt.toLocaleString('zh-CN', { timeZone: 'UTC' });
+                return {
+                    ...site,
+                    lastUpdate: displayDate,
+                    status: statusInfo.label,
+                    statusCls: statusInfo.cls,
+                    diffDays: Math.round(diffDays)
+                };
+            } catch (err) {
+                console.error(`检查 ${subdomain} 失败:`, err);
+                return { ...site, lastUpdate: null, status: '检查失败', statusCls: 'unknown' };
+            }
+        }
+
+        // ========== 主逻辑 ==========
+        async function loadData() {
+            const listEl = document.getElementById('list');
+            const statsEl = document.getElementById('stats');
+            const timeEl = document.getElementById('update-time');
+            const btn = document.querySelector('.refresh-btn');
+            
+            btn.disabled = true;
+            listEl.innerHTML = '<div class="loading">⏳ 正在获取站点列表...</div>';
+            
+            try {
+                // 1. 获取站点列表
+                const sites = await fetchSitesList();
+                if (sites.length === 0) {
+                    listEl.innerHTML = '<div class="loading">📭 暂无站点，请先添加。</div>';
+                    statsEl.innerHTML = '暂无数据';
+                    btn.disabled = false;
+                    return;
+                }
+                
+                listEl.innerHTML = `<div class="loading">⏳ 正在检查 ${sites.length} 个站点的 RSS（可能需要几秒）...</div>`;
+                
+                // 2. 并行检查所有站点
+                const results = await Promise.all(sites.map(site => checkSite(site)));
+                
+                // 3. 统计
+                const stats = { total: results.length };
+                results.forEach(r => {
+                    stats[r.status] = (stats[r.status] || 0) + 1;
+                });
+                
+                // 4. 渲染统计
+                const statusOrder = ['活跃', '不活跃', '垂死状态', '无人问津', '已被删除', '异常', '检查失败', '未知'];
+                let statsHtml = '';
+                statusOrder.forEach(label => {
+                    if (stats[label]) {
+                        const cls = {
+                            '活跃': 'status-active',
+                            '不活跃': 'status-inactive',
+                            '垂死状态': 'status-dying',
+                            '无人问津': 'status-abandoned',
+                            '已被删除': 'status-deleted'
+                        }[label] || '';
+                        statsHtml += `<span><span class="status ${cls}" style="font-size:0.75rem;">${label}</span> <span class="num">${stats[label]}</span></span>`;
+                    }
+                });
+                statsEl.innerHTML = `共 <span class="num">${stats.total}</span> 个站点 | ${statsHtml}`;
+                
+                // 5. 渲染列表
+                let html = '';
+                results.forEach(r => {
+                    const statusCls = r.statusCls || 'unknown';
+                    const lastUpdate = r.lastUpdate || '无数据';
+                    const url = `https://${r.subdomain}.wikidot.com`;
+                    html += `
+                        <div class="card status-${statusCls}">
+                            <div class="title"><a href="${url}" target="_blank">${r.title}</a></div>
+                            ${r.subtitle ? `<div class="subtitle">${r.subtitle}</div>` : ''}
+                            <div class="meta">
+                                <span class="status status-${statusCls}">${r.status}</span>
+                                <span class="last-update">📅 ${lastUpdate}</span>
+                                <span class="subdomain">${r.subdomain}.wikidot.com</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                listEl.innerHTML = html;
+                timeEl.textContent = `更新于 ${new Date().toLocaleString('zh-CN')}`;
+                
+            } catch (err) {
+                console.error(err);
+                listEl.innerHTML = `<div class="error">❌ 加载失败: ${err.message}</div>`;
+            }
+            btn.disabled = false;
+        }
+
+        // ========== 自动加载 ==========
+        loadData();
+    </script>
+</body>
+</html>
