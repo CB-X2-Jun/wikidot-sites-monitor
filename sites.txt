@@ -79,3 +79,4 @@ r-backrooms-wiki-cn|R-The Backrooms 同人创作站|你什么时候来过这里
 backrooms-forget|The Backrooms Forget|尘土飞扬，欢迎来到这里
 backrooms-world|Backrooms世界维基|你梦里来过这里
 smalltown|小城的问候|Greetings from afar...
+chat-st|小城聊天室|
