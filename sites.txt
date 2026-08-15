@@ -23,3 +23,4 @@ backrooms-creater|后室建站器|
 icp-gov-soviet|苏维埃ICP备案号|仅用于娱乐
 brsandbox-pro|后室沙盒 PRO|你曾经来过这里
 oxygennine|OZone|说真的，有点区
+scpsandboxcn|SCP基金會中文沙盒站|千仞高塔，筑基于此
