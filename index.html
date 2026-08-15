@@ -140,50 +140,64 @@
 
         // ========== 检查单个站点的 RSS ==========
         async function checkSite(site) {
-            const { subdomain, title, subtitle } = site;
-            const rssUrl = `http://${subdomain}.wikidot.com/feed/site-changes.xml`;
-            const url = RSS_PROXY ? `${RSS_PROXY}${encodeURIComponent(rssUrl)}` : rssUrl;
-            
-            try {
-                const resp = await fetch(url, { cache: 'no-store' });
-                if (resp.status === 404) {
-                    return { ...site, lastUpdate: null, status: '已被删除', statusCls: 'deleted' };
-                }
-                if (!resp.ok) {
-                    return { ...site, lastUpdate: null, status: '异常', statusCls: 'unknown' };
-                }
-                const xml = await resp.text();
-                
-                // 直接从第一个 item 中提取 pubDate（这才是真正的页面更新时间）
-                const match = xml.match(/<item>.*?<pubDate>(.*?)<\/pubDate>/is);
-                if (!match) {
-                    return { ...site, lastUpdate: null, status: '未知', statusCls: 'unknown' };
-                }
-                
-                const dateStr = match[1];
-                const dt = new Date(dateStr);
-                if (isNaN(dt.getTime())) {
-                    return { ...site, lastUpdate: dateStr, status: '日期解析失败', statusCls: 'unknown' };
-                }
-                
-                const now = new Date();
-                const diffDays = (now - dt) / (1000 * 60 * 60 * 24);
-                const statusInfo = getStatus(diffDays);
-                
-                // 格式化显示
-                const displayDate = dt.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
-                return {
-                    ...site,
-                    lastUpdate: displayDate,
-                    status: statusInfo.label,
-                    statusCls: statusInfo.cls,
-                    diffDays: Math.round(diffDays)
-                };
-            } catch (err) {
-                console.error(`检查 ${subdomain} 失败:`, err);
-                return { ...site, lastUpdate: null, status: '检查失败', statusCls: 'unknown' };
-            }
+    const { subdomain, title, subtitle } = site;
+    const rssUrl = `http://${subdomain}.wikidot.com/feed/site-changes.xml`;
+    const url = RSS_PROXY ? `${RSS_PROXY}${encodeURIComponent(rssUrl)}` : rssUrl;
+    
+    try {
+        const resp = await fetch(url, { cache: 'no-store' });
+        
+        // 404 明确表示站点不存在
+        if (resp.status === 404) {
+            return { ...site, lastUpdate: null, status: '已被删除', statusCls: 'deleted' };
         }
+        
+        // 其他非 200 状态码（500, 502, 403, 429 等）视为临时异常
+        if (resp.status !== 200) {
+            return { ...site, lastUpdate: null, status: '异常', statusCls: 'unknown' };
+        }
+        
+        const xml = await resp.text();
+        
+        // 检查返回内容是否为有效的 RSS
+        if (!xml.includes('<rss') && !xml.includes('<channel')) {
+            // 如果包含 HTML 标题，确定是站点不存在的错误页
+            if (xml.includes('<title>The site does not exist</title>')) {
+                return { ...site, lastUpdate: null, status: '已被删除', statusCls: 'deleted' };
+            }
+            // 其他非 RSS 内容视为异常（可能是 API 变更或其他问题）
+            return { ...site, lastUpdate: null, status: '异常', statusCls: 'unknown' };
+        }
+        
+        // 从第一个 item 中提取 pubDate
+        const match = xml.match(/<item>.*?<pubDate>(.*?)<\/pubDate>/is);
+        if (!match) {
+            return { ...site, lastUpdate: null, status: '未知', statusCls: 'unknown' };
+        }
+        
+        const dateStr = match[1];
+        const dt = new Date(dateStr);
+        if (isNaN(dt.getTime())) {
+            return { ...site, lastUpdate: dateStr, status: '日期解析失败', statusCls: 'unknown' };
+        }
+        
+        const now = new Date();
+        const diffDays = (now - dt) / (1000 * 60 * 60 * 24);
+        const statusInfo = getStatus(diffDays);
+        
+        const displayDate = dt.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+        return {
+            ...site,
+            lastUpdate: displayDate,
+            status: statusInfo.label,
+            statusCls: statusInfo.cls,
+            diffDays: Math.round(diffDays)
+        };
+    } catch (err) {
+        console.error(`检查 ${subdomain} 失败:`, err);
+        return { ...site, lastUpdate: null, status: '检查失败', statusCls: 'unknown' };
+    }
+}
 
         // ========== 主逻辑 ==========
         async function loadData() {
