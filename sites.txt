@@ -40,3 +40,4 @@ psychotronicsdivision|Psychotronics Division|Divided, we are One. One, we are Al
 rpc-wiki-cn|RPC管理局|研究，保卫，收容
 rpcauthority|RPC Authority|Research, Protection, Containment
 deep-forest-club|深林文学部|森林深处，写作讨论
+discond|discoNd聊天室|随意而聊，随心而写
