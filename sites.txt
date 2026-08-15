@@ -7,3 +7,5 @@ rule-wiki|规则怪谈档案馆|记住它们，或者被它们记住
 the-sea-wiki|海|既广阔，又深邃。
 sites-monitor|Wikidot Sites Monitor|那些垂死挣扎的网站们
 special-ability-wiki|异能档案馆|行于黑暗·昭于光明
+
+downrooms|The Downrooms 中文维基|向下探索，唤起记忆——面对突发的既视感，我们需要更深入些
