@@ -84,3 +84,4 @@ scp-wiki-mc|SCP基金会Minecraft分部|控制，收容，保护
 groundrooms-wiki-cn|The Groundrooms 地室|你随时能来到这里
 xinshuguang-wiki|火烛：新曙光|核战废土之上新的秩序
 cr-universe|Cr宇宙档案馆|潜身于虚妄之中
+news-backrooms|Backrooms后室圈新闻社|人人是记者 共录新鲜事
