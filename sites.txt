@@ -86,3 +86,4 @@ xinshuguang-wiki|火烛：新曙光|核战废土之上新的秩序
 cr-universe|Cr宇宙档案馆|潜身于虚妄之中
 news-backrooms|Backrooms后室圈新闻社|人人是记者 共录新鲜事
 scp-vn|Tổ Chức SCP (VN)|Lưu trữ, Quản thúc, Bảo vệ
+scp-cs|Nadace SCP (CS)|Česká Větev Nadace SCP
