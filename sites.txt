@@ -28,3 +28,4 @@ xiaofan-server|小凡SL服务器|我们收容，我们失效，我们跑路
 blanktemplate-wei|汉化空白模板|
 hub-cn|WIKIDOT联盟|共生，合作，协助
 liminal-sandbox-cn|阈限档案沙盒站|创造不应存在的空间
+ci-wiki|Chaos Insurgency|
