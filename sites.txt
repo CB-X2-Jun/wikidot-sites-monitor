@@ -30,3 +30,4 @@ hub-cn|WIKIDOT联盟|共生，合作，协助
 liminal-sandbox-cn|阈限档案沙盒站|创造不应存在的空间
 ci-wiki|Chaos Insurgency|
 linux|PolishLinux.org Wiki|Polish your GNU/Linux!
+scp-wiki|SCP Foundation|Secure, Contain, Protect
