@@ -48,3 +48,4 @@ lostmedia|失传媒体中文维基|Lost Media CN
 liminal-archives-cloud|阈限档案云国分局|探索不应存在的空间
 backrooms-uli|The Backrooms ULI|Underrepresented Languages Incubator
 es-backrooms-wiki|Los Backrooms (ES)|Ya has estado aquí antes.
+backrooms-vn|Backrooms Việt Nam|Bạn đã từng ở đây.
