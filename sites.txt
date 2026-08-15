@@ -52,3 +52,4 @@ backrooms-vn|Backrooms Việt Nam|Bạn đã từng ở đây.
 ababadaa-da-a-dwqui|测试：不存在的站点|此站不存在，为测试。
 css|The CSS Zone|Making your Wikidot site look //great!//
 feedback|Leave your feedback|
+scp-ukrainian|SCP Foundation Ukrainian Branch|Охороняти. Утримувати. Захищати.
