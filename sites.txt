@@ -81,3 +81,4 @@ backrooms-world|Backrooms世界维基|你梦里来过这里
 smalltown|小城的问候|Greetings from afar...
 chat-st|小城聊天室|
 scp-wiki-mc|SCP基金会Minecraft分部|控制，收容，保护
+groundrooms-wiki-cn|The Groundrooms 地室|你随时能来到这里
