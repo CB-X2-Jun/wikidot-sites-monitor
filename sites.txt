@@ -44,3 +44,4 @@ discond|discoNd聊天室|随意而聊，随心而写
 the-piyan-cn|piyan|你来到过此处。吗？
 scp-wiki-cloud|SCP基金会云国分部|自由 徜徉 无束
 translate|Translate Wikidot!|
+lostmedia|失传媒体中文维基|Lost Media CN
