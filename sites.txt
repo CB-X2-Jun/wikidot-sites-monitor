@@ -1,5 +1,4 @@
-backrooms-wiki-cn|The Backroomsä¸­æç»´åº|ä½ æ¾ç»æ¥è¿è¿é
-liminal-archives-cn|ééæ¡£æ¡|æ¢ç´¢ä¸åºå­å¨çç©ºé´
-nationarea|The Nationarea|æ¾æä¸å½æ¥æ
-
-scp-wiki-cn|SCP 基金会|控制，收容，保护
+backrooms-wiki-cn|The Backrooms中文维基|你曾经来过这里
+liminal-archives-cn|阈限档案|探索不应存在的空间
+nationarea|The Nationarea|曾有万国来朝
+scp-wiki-cn|SCP基金会|控制，收容，保护
