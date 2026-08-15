@@ -73,3 +73,4 @@ the-sea-wiki-cn|海 旧站|既广阔，又深邃。
 deepseekbackrooms|deepseek Backrooms|探索未知之境
 water-abyss|水渊|繁雨当落入世间，一切将溺于水中...
 anothords|Anothords 另一个世界|超出边界，梦中新生
+fake-backrooms|Fake Backrooms|你啥时候来过这里？？？
