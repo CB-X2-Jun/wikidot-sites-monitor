@@ -12,3 +12,4 @@ downrooms|The Downrooms 中文维基|向下探索，唤起记忆——面对突�
 ubmh|地下黑市|属于闲人的社区
 backrooms-wiki|The Backrooms Wiki|You've been here before.
 www|Wikidot|Free and Pro Wiki Hosting
+wmonitor|Monitor Project 站点监视器|还活着吗
