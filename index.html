@@ -10,7 +10,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background: #f5f7fa;
             padding: 20px;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             color: #333;
         }
@@ -31,76 +31,44 @@
         .loading { text-align: center; padding: 40px; color: #6c757d; }
         .error { text-align: center; padding: 40px; color: #dc3545; }
         
-        /* ===== 核心修改：网格布局 ===== */
-        #list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 12px;
-        }
-        
         .card {
             background: white;
             border-left: 4px solid #ccc;
-            padding: 14px 16px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
             border-radius: 4px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.06);
             transition: background 0.2s;
-            display: flex;
-            flex-direction: column;
-            /* 保证所有文本自动换行 */
-            word-wrap: break-word;
-            overflow-wrap: break-word;
         }
         .card:hover { background: #fafbfc; }
-        .card .title { 
-            font-weight: 600; 
-            font-size: 1.05rem; 
-            line-height: 1.4;
-        }
+        .card .title { font-weight: 600; font-size: 1.05rem; }
         .card .title a { color: #0366d6; text-decoration: none; }
         .card .title a:hover { text-decoration: underline; }
-        .card .subtitle { 
-            color: #6c757d; 
-            font-size: 0.9rem; 
-            margin-top: 2px;
-            line-height: 1.3;
-        }
+        .card .subtitle { color: #6c757d; font-size: 0.9rem; margin-top: 2px; }
         .card .meta { 
             margin-top: 8px; 
             font-size: 0.85rem; 
             display: flex; 
-            flex-wrap: wrap;      /* 允许换行 */
-            gap: 6px 12px; 
+            gap: 16px; 
+            flex-wrap: wrap; 
             align-items: center;
-            line-height: 1.5;
         }
-        .card .meta .status {
+        .status {
             display: inline-block;
             padding: 2px 14px;
             border-radius: 20px;
             font-weight: 600;
             font-size: 0.8rem;
-            white-space: nowrap;   /* 状态标签不换行 */
         }
-        .card .meta .last-update {
-            color: #6c757d;
-            white-space: nowrap;   /* 日期时间不换行 */
-        }
-        .card .meta .subdomain {
-            color: #adb5bd;
-            font-size: 0.8rem;
-            font-family: monospace;
-            word-break: break-all; /* 域名过长时换行 */
-            flex-basis: 100%;      /* 默认占一整行，单独一行 */
-            margin-top: 2px;
-        }
-        
         .status-active { background: #d4edda; color: #155724; border-left-color: #28a745; }
         .status-inactive { background: #fff3cd; color: #856404; border-left-color: #ffc107; }
         .status-dying { background: #ffe5d0; color: #8a4a1c; border-left-color: #fd7e14; }
         .status-abandoned { background: #f8d7da; color: #721c24; border-left-color: #dc3545; }
         .status-deleted { background: #e2e3e5; color: #383d41; border-left-color: #6c757d; }
         .status-unknown { background: #e9ecef; color: #495057; border-left-color: #6c757d; }
+        
+        .last-update { color: #6c757d; }
+        .subdomain { color: #adb5bd; font-size: 0.8rem; font-family: monospace; }
         
         .refresh-btn {
             background: #0366d6;
@@ -116,7 +84,7 @@
         
         @media (max-width: 600px) {
             body { padding: 12px; }
-            #list { grid-template-columns: 1fr; } /* 小屏幕单列 */
+            .card { padding: 12px 14px; }
             .stats { flex-direction: column; gap: 6px; }
         }
     </style>
@@ -133,9 +101,11 @@
     <div id="list">请稍候，正在抓取数据...</div>
 
     <script>
-        // ========== 配置（保持不变） ==========
+        // ========== 配置 ==========
         const SITES_TXT_URL = 'https://raw.githubusercontent.com/CB-X2-Jun/wikidot-sites-monitor/main/sites.txt';
-        const RSS_PROXY = 'https://wsites.x2cb.cc.cd/proxy?url=';
+        // 如果你有跨域代理（比如 Cloudflare Worker 代理），可以设置
+        const RSS_PROXY = 'https://wsites.x2cb.cc.cd/proxy?url='; // 例如: 'https://your-worker.workers.dev/proxy?url='
+        // 如果 RSS_PROXY 为空，则直接请求 RSS（可能有跨域限制，但很多 Wikidot RSS 允许跨域）
 
         // ========== 状态定义 ==========
         const STATUS = {
@@ -184,6 +154,7 @@
                 }
                 const xml = await resp.text();
                 
+                // 直接从第一个 item 中提取 pubDate（这才是真正的页面更新时间）
                 const match = xml.match(/<item>.*?<pubDate>(.*?)<\/pubDate>/is);
                 if (!match) {
                     return { ...site, lastUpdate: null, status: '未知', statusCls: 'unknown' };
@@ -199,6 +170,7 @@
                 const diffDays = (now - dt) / (1000 * 60 * 60 * 24);
                 const statusInfo = getStatus(diffDays);
                 
+                // 格式化显示
                 const displayDate = dt.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
                 return {
                     ...site,
@@ -224,6 +196,7 @@
             listEl.innerHTML = '<div class="loading">⏳ 正在获取站点列表...</div>';
             
             try {
+                // 1. 获取站点列表
                 const sites = await fetchSitesList();
                 if (sites.length === 0) {
                     listEl.innerHTML = '<div class="loading">📭 暂无站点，请先添加。</div>';
@@ -234,13 +207,16 @@
                 
                 listEl.innerHTML = `<div class="loading">⏳ 正在检查 ${sites.length} 个站点的 RSS（可能需要几秒）...</div>`;
                 
+                // 2. 并行检查所有站点
                 const results = await Promise.all(sites.map(site => checkSite(site)));
                 
+                // 3. 统计
                 const stats = { total: results.length };
                 results.forEach(r => {
                     stats[r.status] = (stats[r.status] || 0) + 1;
                 });
                 
+                // 4. 渲染统计
                 const statusOrder = ['活跃', '不活跃', '垂死状态', '无人问津', '已被删除', '异常', '检查失败', '未知'];
                 let statsHtml = '';
                 statusOrder.forEach(label => {
@@ -257,6 +233,7 @@
                 });
                 statsEl.innerHTML = `共 <span class="num">${stats.total}</span> 个站点 | ${statsHtml}`;
                 
+                // 5. 渲染列表
                 let html = '';
                 results.forEach(r => {
                     const statusCls = r.statusCls || 'unknown';
@@ -284,6 +261,7 @@
             btn.disabled = false;
         }
 
+        // ========== 自动加载 ==========
         loadData();
     </script>
 </body>
