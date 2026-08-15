@@ -34,3 +34,4 @@ scp-wiki|SCP Foundation|Secure, Contain, Protect
 backrooms-int|The Backrooms INT|International Communication and Translation Centre
 japan-backrooms-wiki|The Backrooms JP Wiki|ようこそ、再訪の空間へ。
 blank-template|Blank Template|
+wanderers-library|The Wanderers' Library|Fiction from another world.
