@@ -96,3 +96,4 @@ goc-wiki-cn|GOC 全球超自然联盟|生存，隐蔽，保护，毁灭，教育
 goc-wiki|Global Occult Coalition|CASEFILES ARCHIVE
 mt-backrooms|The Backrooms MT|你并不是没有从未来过这里
 backrooms-hn-cn|The Backrooms HN分站|群星璀璨之时
+backrooms-mc-new|The Backrooms-Minecraft 后室MC层群维基|你曾经来过这里
