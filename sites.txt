@@ -101,3 +101,4 @@ backrooms-p-cn|The Backrooms P|你将会来到这里
 backrooms-wiki-m6c|The Backrooms M6C|你或将来到这里
 dreamx|Dreamx|于梦如浮云
 nil-backrooms-wiki|The Backrooms nil层群|你曾经来过这里
+backrooms-fun|The Backrooms FUN层群/享乐分站|你曾经来过这里
