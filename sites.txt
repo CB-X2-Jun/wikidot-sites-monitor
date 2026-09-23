@@ -95,3 +95,4 @@ backrooms-hn-sandbox-cn|后室HN分部沙盒站|你曾经来过这里
 goc-wiki-cn|GOC 全球超自然联盟|生存，隐蔽，保护，毁灭，教育
 goc-wiki|Global Occult Coalition|CASEFILES ARCHIVE
 mt-backrooms|The Backrooms MT|你并不是没有从未来过这里
+backrooms-hn-cn|The Backrooms HN分站|群星璀璨之时
