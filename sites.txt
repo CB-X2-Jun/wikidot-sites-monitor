@@ -98,3 +98,4 @@ mt-backrooms|The Backrooms MT|你并不是没有从未来过这里
 backrooms-hn-cn|The Backrooms HN分站|群星璀璨之时
 backrooms-mc-new|The Backrooms-Minecraft 后室MC层群维基|你曾经来过这里
 backrooms-p-cn|The Backrooms P|你将会来到这里
+backrooms-wiki-m6c|The Backrooms M6C|你或将来到这里
