@@ -107,3 +107,4 @@ backroomssandboxcn|The Backrooms中文沙盒站|创造与超越
 floatingcloud|云站|一个专注于摆烂，不更新的网站
 kp-box-backrooms|后室KP沙盒站|在这里编辑你的文章
 nc-backroom|The NC Backrooms|你或许向往远方
+backrooms-wiki-j|The Backrooms-J|你终会来到这里
