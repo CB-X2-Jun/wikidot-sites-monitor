@@ -113,3 +113,4 @@ yeebackrooms|The Backrooms E|你何曾来过这里
 et-backrooms-wiki-cn|Et - The Backrooms 同人创作站（后室乙基分站）|想想你有没有来过这里
 bru|后室联合站点|团结 一致 共创
 core-wiki|CORE|我能吞下玻璃而不伤身体
+backroomsfuture|Backrooms Future|The future and its consequences
