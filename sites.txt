@@ -116,3 +116,4 @@ core-wiki|CORE|我能吞下玻璃而不伤身体
 backroomsfuture|Backrooms Future|The future and its consequences
 larpfoundation-wiki|LARP Foundation|Locate, Assess, Research, Prevent
 timeline-bookstore|时间轴书店|文学写作的好地方
+chongzhen|朱由检|
